@@ -1,6 +1,6 @@
 const adminMiddleware = (req, res, next) => {
     console.log('Admin Middleware - User:', {
-        id: req.user.id,
+        id: req.user.userId,
         email: req.user.email,
         role: req.user.role
     });

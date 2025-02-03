@@ -11,6 +11,8 @@ import WatchLibrary from "./screens/WatchLibrary.jsx";
 import CreateWatch from "./screens/CreateWatch.jsx";
 import ViewWatch from "./screens/ViewWatch.jsx";
 import AdminDashboard from './screens/AdminDashboard';
+import UserCollection from './screens/UserCollection';
+import AdminBrands from './screens/AdminBrands';
 
 // Composant pour la logique de redirection
 const AppContent = () => {
@@ -83,6 +85,17 @@ const AppContent = () => {
           element={
             <ProtectedRoute adminOnly={true}>
               <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/user/:userId" element={<UserCollection />} />
+
+        <Route
+          path="/admin/brands"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminBrands />
             </ProtectedRoute>
           }
         />

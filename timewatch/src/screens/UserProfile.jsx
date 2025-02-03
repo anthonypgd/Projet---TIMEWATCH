@@ -15,9 +15,9 @@ export default function UserProfile() {
 
     const fetchUserWatches = async () => {
         try {
-            console.log('Fetching watches for user ID:', user.userId);
+            console.log('Fetching watches for user ID:', user.id);
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/watches/user/${user.userId}`,
+                `${import.meta.env.VITE_API_URL}/api/watches/user/${user.id}`,
                 {
                     headers: {
                         'Authorization': localStorage.getItem('token')
@@ -145,11 +145,11 @@ export default function UserProfile() {
                                     {watch.images && watch.images[0] && (
                                         <img
                                             src={watch.images[0]}
-                                            alt={`${watch.marque} ${watch.modele}`}
+                                            alt={`${watch.marque.name} ${watch.modele}`}
                                             className="w-full h-48 object-cover rounded-lg mb-4"
                                         />
                                     )}
-                                    <h3 className="text-xl font-semibold">{watch.marque}</h3>
+                                    <h3 className="text-xl font-semibold">{watch.marque.name}</h3>
                                     <p className="text-gray-600">{watch.modele}</p>
                                     {watch.prix && (
                                         <p className="text-gray-800 font-bold mt-2">
@@ -195,11 +195,11 @@ export default function UserProfile() {
                                 {watch.images && watch.images[0] && (
                                     <img
                                         src={watch.images[0]}
-                                        alt={`${watch.marque} ${watch.modele}`}
+                                        alt={`${watch.marque.name} ${watch.modele}`}
                                         className="w-full h-48 object-cover rounded-lg mb-4"
                                     />
                                 )}
-                                <h3 className="text-xl font-semibold">{watch.marque}</h3>
+                                <h3 className="text-xl font-semibold">{watch.marque.name}</h3>
                                 <p className="text-gray-600">{watch.modele}</p>
                                 {watch.prix && (
                                     <p className="text-gray-800 font-bold mt-2">

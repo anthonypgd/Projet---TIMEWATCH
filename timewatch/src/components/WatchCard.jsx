@@ -20,7 +20,7 @@ export default function WatchCard({ watch }) {
                 )}
                 <div className="flex justify-between items-start">
                     <div>
-                        <h3 className="text-xl font-semibold">{watch.marque}</h3>
+                        <h3 className="text-xl font-semibold">{watch.marque.name}</h3>
                         <p className="text-gray-600">{watch.modele}</p>
                         {watch.prix && (
                             <p className="text-gray-800 font-bold mt-2">

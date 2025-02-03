@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function CreateWatch() {
@@ -19,29 +19,88 @@ export default function CreateWatch() {
   const [isDragging, setIsDragging] = useState(false);
   const [images, setImages] = useState([]);
   const [error, setError] = useState('');
+  const [brands, setBrands] = useState([]);
+  const [selectedBrand, setSelectedBrand] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/brands`, {
+          headers: {
+            'Authorization': localStorage.getItem('token')
+          }
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setBrands(data.brands);
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des marques:', error);
+      }
+    };
+
+    fetchBrands();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setError('');
+
     try {
+      const token = localStorage.getItem('token');
+      console.log('Token stocké:', token);
+      
+      if (!token) {
+        setError('Session expirée, veuillez vous reconnecter');
+        navigate('/login');
+        return;
+      }
+
+      if (!formData.marque) {
+        setError('Veuillez sélectionner une marque');
+        setIsSubmitting(false);
+        return;
+      }
+
       const watchData = {
         ...formData,
+        marque: formData.marque,
         images: formData.images
       };
+
+      console.log('Envoi de la requête avec:', {
+        url: `${import.meta.env.VITE_API_URL}/api/watches/watch`,
+        headers: {
+          'Authorization': token
+        },
+        data: watchData
+      });
 
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/watches/watch`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': localStorage.getItem('token')
+          'Authorization': token
         },
         body: JSON.stringify(watchData)
       });
 
-      if (response.ok) {
-        navigate('/profile');
+      console.log('Status de la réponse:', response.status);
+      const data = await response.json();
+      console.log('Données de la réponse:', data);
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Erreur lors de la création de la montre');
       }
+
+      navigate('/profile');
     } catch (error) {
-      console.error('Error creating watch:', error);
+      console.error('Erreur:', error);
+      setError(error.message || 'Erreur lors de la publication');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -110,14 +169,20 @@ export default function CreateWatch() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium text-gray-700">Marque</label>
-            <input
-              type="text"
+            <select
               name="marque"
               value={formData.marque}
               onChange={handleChange}
               className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
               required
-            />
+            >
+              <option value="">Sélectionner une marque</option>
+              {brands.map(brand => (
+                <option key={brand._id} value={brand._id}>
+                  {brand.name}
+                </option>
+              ))}
+            </select>
           </div>
           
           <div>

@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const WatchSchema = new mongoose.Schema({
+const WatchSchema = new Schema({
   marque: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'Brand',
     required: true
   },
   modele: {
@@ -16,7 +17,7 @@ const WatchSchema = new mongoose.Schema({
   },
   prix: {
     type: Number,
-    required: false
+    required: true
   },
   condition: {
     type: String,
@@ -28,18 +29,13 @@ const WatchSchema = new mongoose.Schema({
     enum: ['Automatique', 'Quartz', 'Mécanique à remontage manuel', 'Autre'],
     required: true
   },
-  description: {
-    type: String,
-    required: false
-  },
+  description: String,
   features: {
     type: [String],
-    required: false,
     default: []
   },
   images: {
     type: [String],
-    required: false,
     default: []
   },
   owner: {
@@ -58,5 +54,8 @@ const WatchSchema = new mongoose.Schema({
 }, {
   timestamps: true
 });
+
+// Ajouter un index sur createdAt pour optimiser le tri
+WatchSchema.index({ createdAt: -1 });
 
 module.exports = mongoose.model('Watch', WatchSchema);

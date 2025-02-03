@@ -12,6 +12,8 @@ const watchRoutes = require('./routes/watch');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
 const commentRoutes = require('./routes/comment');
+const adminRoutes = require('./routes/admin');
+const brandRoutes = require('./routes/brand');
 
 const app = express();
 
@@ -38,6 +40,8 @@ app.use('/api/watches', watchRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/likes', likeRoutes);  // Ajout explicite de la route des likes
+app.use('/api/admin', adminRoutes);
+app.use('/api/brands', brandRoutes);
 
 // Autres routes via apiRouter si nécessaire
 app.use("/api", apiRouter);

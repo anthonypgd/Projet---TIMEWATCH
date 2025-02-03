@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import Comments from '../components/Comments';
+import Comments from '../components/Comment';
 import LikeButton from '../components/LikeButton';
 
 export default function ViewWatch() {
@@ -45,7 +45,7 @@ export default function ViewWatch() {
                         {watch.images && watch.images[0] && (
                             <img
                                 src={watch.images[0]}
-                                alt={`${watch.marque} ${watch.modele}`}
+                                alt={`${watch.marque.name} ${watch.modele}`}
                                 className="w-full h-96 object-cover"
                             />
                         )}
@@ -70,12 +70,19 @@ export default function ViewWatch() {
                             </div>
                             <div>
                                 <p className="text-sm text-gray-600">Publié par</p>
-                                <p className="font-medium text-gray-900">{watch.owner.username}</p>
+                                <div className="flex items-center mb-4">
+                                    <Link 
+                                        to={`/user/${watch.owner._id}`}
+                                        className="text-blue-600 hover:text-blue-800 flex items-center"
+                                    >
+                                        <span className="font-semibold">{watch.owner.username}</span>
+                                    </Link>
+                                </div>
                             </div>
                         </div>
 
                         <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
-                            {watch.marque}
+                            {watch.marque.name}
                         </div>
                         <h1 className="mt-2 text-3xl font-bold text-gray-900">
                             {watch.modele}

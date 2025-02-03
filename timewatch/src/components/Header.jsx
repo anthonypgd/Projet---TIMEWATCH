@@ -4,11 +4,13 @@ import {useContext} from "react";
 import imgCompte from '../assets/imgCompte.jpeg'
 import imgPostWatch from '../assets/imgPostWatch.webp'
 import imgAccueil from '../assets/imgAccueil.jpg'
+import {useNavigate} from "react-router-dom";
 
 
 export default function Header() {
   const { getUserInfos, logout } = useContext(UserContext);
   const user = getUserInfos();
+  const navigate = useNavigate();
 
   console.log("User data:", user);
 

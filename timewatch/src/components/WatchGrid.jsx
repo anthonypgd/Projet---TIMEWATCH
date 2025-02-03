@@ -13,7 +13,7 @@ export default function WatchGrid({ watches }) {
             {watch.images && watch.images[0] && (
               <img
                 src={watch.images[0]}
-                alt={`${watch.marque} ${watch.modele}`}
+                alt={`${watch.marque.name} ${watch.modele}`}
                 className="w-full h-48 object-cover"
               />
             )}
@@ -23,7 +23,9 @@ export default function WatchGrid({ watches }) {
           </div>
           
           <div className="p-4">
-            <h2 className="text-xl font-bold text-gray-800">{watch.marque}</h2>
+            <h2 className="text-xl font-bold text-gray-800">
+              {watch.marque.name}
+            </h2>
             <h3 className="text-lg text-gray-600">{watch.modele}</h3>
             
             <div className="mt-2 flex flex-wrap gap-2">

@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useEffect, useState, useMemo} from "react";
 import WatchGrid from "../components/WatchGrid.jsx";
 
 const VITE_API_URL = `${import.meta.env.VITE_API_URL}/api/watches/watches`;
@@ -6,56 +6,37 @@ const VITE_API_URL = `${import.meta.env.VITE_API_URL}/api/watches/watches`;
 export default function WelcomeScreen() {
     const [watches, setWatches] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
+    const [loading, setLoading] = useState(true);
 
-    // Fonction pour filtrer les montres dans la variable filteredWatches
-    const filteredWatches = watches.filter(watch =>
-        watch.marque.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        watch.modele.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    function fetchWatches() {
-        const token = localStorage.getItem("token");
-        
-        if (!token) {
-            console.error('Token manquant');
-            return;
-        }
-
-        const headers = {
-            "Content-Type": "application/json",
-            "Authorization": token
-        };
-
-        fetch(`${import.meta.env.VITE_API_URL}/api/watches/watches`, {
-            method: "GET",
-            headers
-        })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`);
-            }
-            return res.json();
-        })
-        .then(data => {
-            if (!data || !data.watches) {
-                console.error('Données invalides:', data);
-                return;
-            }
-            // Trier les montres par date de création
-            const sortedWatches = data.watches.sort((a, b) => 
-                new Date(b.createdAt) - new Date(a.createdAt)
-            );
-            setWatches(sortedWatches);
-        })
-        .catch(error => {
-            console.error('Error fetching watches:', error);
-            setWatches([]); // Initialiser avec un tableau vide en cas d'erreur
-        });
-    }
+    const filteredWatches = useMemo(() => {
+        const searchLower = searchTerm.toLowerCase();
+        return watches.filter(watch => (
+            watch.marque.name.toLowerCase().includes(searchLower) ||
+            watch.modele.toLowerCase().includes(searchLower) ||
+            watch.condition.toLowerCase().includes(searchLower) ||
+            watch.mouvement.toLowerCase().includes(searchLower)
+        ));
+    }, [watches, searchTerm]);
 
     useEffect(() => {
+        const fetchWatches = async () => {
+            try {
+                const response = await fetch(`${import.meta.env.VITE_API_URL}/api/watches/watches`, {
+                    headers: { 'Authorization': localStorage.getItem('token') }
+                });
+                const { watches } = await response.json();
+                if (response.ok) setWatches(watches);
+            } catch (error) {
+                console.error('Error fetching watches:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchWatches();
     }, []);
+
+    if (loading) return <div className="text-center py-8">Chargement...</div>;
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -66,10 +47,10 @@ export default function WelcomeScreen() {
             <div className="mb-8">
                 <input
                     type="text"
-                    placeholder="Rechercher par marque ou modèle" 
+                    placeholder="Rechercher une montre..."
                     value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}  // Mise à jour de l'état à chaque frappe
-                    className="w-full px-4 py-2 border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full p-4 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <div className="mt-4 text-center">
                     <div className="inline-block bg-white/80 backdrop-blur-sm px-6 py-3 rounded-lg shadow-md">

@@ -113,7 +113,7 @@ export default function Comments({ watchId }) {
 
     const canDeleteComment = (comment) => {
         if (!user) return false;
-        return user.role === 'admin' || user._id === comment.author._id;
+        return user.role === 'admin' || user.id === comment.author._id;
     };
 
     return (
@@ -138,12 +138,12 @@ export default function Comments({ watchId }) {
 
             <div className="space-y-4">
                 {comments.map(comment => {
-                    // Log de debug pour chaque commentaire
+                    // Log de debug modifié pour utiliser user.id
                     console.log('Comment check:', {
                         commentAuthorId: comment.author._id,
-                        userId: user?._id,
+                        userId: user?.id,
                         isAdmin: user?.role === 'admin',
-                        shouldShowDelete: user?.role === 'admin' || comment.author._id === user?._id
+                        shouldShowDelete: user?.role === 'admin' || user?.id === comment.author._id
                     });
 
                     return (
@@ -153,7 +153,7 @@ export default function Comments({ watchId }) {
                                     <p className="font-semibold">{comment.author.username}</p>
                                     <p className="mt-1">{comment.content}</p>
                                 </div>
-                                {(user?.role === 'admin' || user?._id === comment.author._id) && (
+                                {(user?.role === 'admin' || user?.id === comment.author._id) && (
                                     <button
                                         onClick={() => handleDelete(comment._id)}
                                         className="text-red-600 hover:text-red-800"

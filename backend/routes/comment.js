@@ -56,23 +56,20 @@ router.get('/watch/:watchId', authMiddleware, async (req, res) => {
 router.delete('/:commentId', authMiddleware, async (req, res) => {
     try {
         const comment = await Comment.findById(req.params.commentId);
-
+        
         if (!comment) {
             return res.status(404).json({ message: 'Commentaire non trouvé' });
         }
 
         // Vérifier si l'utilisateur est l'auteur ou admin
-        const isAuthor = comment.author.toString() === req.user.userId;
-        const isAdmin = req.user.role === 'admin';
-
-        if (!isAuthor && !isAdmin) {
-            return res.status(403).json({ message: 'Non autorisé' });
+        if (comment.author.toString() !== req.user.userId && req.user.role !== 'admin') {
+            return res.status(403).json({ message: 'Non autorisé à supprimer ce commentaire' });
         }
 
-        await comment.deleteOne();
+        await Comment.findByIdAndDelete(req.params.commentId);
         res.json({ message: 'Commentaire supprimé avec succès' });
     } catch (error) {
-        res.status(500).json({ message: 'Erreur lors de la suppression' });
+        res.status(500).json({ message: error.message });
     }
 });
 

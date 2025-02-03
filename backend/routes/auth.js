@@ -51,8 +51,17 @@ router.post('/login', async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        res.status(200).json({ token, user });
+        res.status(200).json({ 
+            token, 
+            user: {
+                id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            }
+        });
     } catch (error) {
+        console.error('Login error:', error);
         res.status(500).json({ message: error.message });
     }
 });
