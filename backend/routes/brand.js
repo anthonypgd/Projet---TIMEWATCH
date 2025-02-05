@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const Brand = require('../models/Brand');
 const authMiddleware = require('../middleware/authMiddleware');
+const adminMiddleware = require('../middleware/adminMiddleware');
 
 // Route GET pour récupérer toutes les marques
 router.get('/', async (req, res) => {
@@ -69,6 +70,16 @@ router.delete('/:brandId', authMiddleware, async (req, res) => {
         }
 
         res.json({ message: 'Marque supprimée avec succès' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Route GET pour récupérer toutes les marques (admin seulement)
+router.get('/admin/brands', authMiddleware, adminMiddleware, async (req, res) => {
+    try {
+        const brands = await Brand.find().sort({ name: 1 });
+        res.json({ brands });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

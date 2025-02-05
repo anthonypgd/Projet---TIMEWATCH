@@ -1,10 +1,12 @@
 import { createContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 export const UserContext = createContext();
 
 export function UserProvider({ children }) {
     const [user, setUser] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -43,6 +45,11 @@ export function UserProvider({ children }) {
     };
 
     const getUserInfos = () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return null;
+        }
         if (!user) {
             const userData = localStorage.getItem('userData');
             if (userData) {

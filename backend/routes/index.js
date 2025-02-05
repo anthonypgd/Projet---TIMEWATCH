@@ -7,6 +7,7 @@ const watchRoutes = require('./watch');
 const adminRoutes = require('./admin');
 const commentRoutes = require('./comment');
 const userRoutes = require('./user');
+const brandRoutes = require('./brand');
 
 // Montage des routes
 router.use('/auth', authRoutes);
@@ -14,8 +15,8 @@ router.use('/watches', watchRoutes);
 router.use('/admin', adminRoutes);
 router.use('/comments', commentRoutes);
 router.use('/user', userRoutes);
+router.use('/brands', brandRoutes);
 
-// Ne garder ici que les routes qui ne sont pas déjà définies individuellement
 router.get('/', (req, res) => {
     res.json({ message: 'API is working' });
 });
