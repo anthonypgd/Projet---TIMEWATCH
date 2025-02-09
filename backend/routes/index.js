@@ -12,16 +12,17 @@ const brandRoutes = require('./brand');
 // Montage des routes
 router.use('/auth', authRoutes);
 router.use('/watches', watchRoutes);
-router.use('/admin', adminRoutes);
+router.use('/admin', adminRoutes);  // Toutes les routes admin sont protégées
 router.use('/comments', commentRoutes);
 router.use('/user', userRoutes);
 router.use('/brands', brandRoutes);
 
+// Route de base
 router.get('/', (req, res) => {
     res.json({ message: 'API is working' });
 });
 
-// Gestion des routes non trouvées dans /api
+// Gestion des routes non trouvées
 router.use('*', (req, res) => {
     res.status(404).json({ 
         message: 'Route API non trouvée',

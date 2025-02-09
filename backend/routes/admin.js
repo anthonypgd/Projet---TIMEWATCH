@@ -3,23 +3,20 @@ const authMiddleware = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
 const User = require('../models/User');
 const Watch = require('../models/Watch');
+const Brand = require('../models/Brand');
 
-// Protéger toutes les routes admin
-router.use(authMiddleware);
-router.use(adminMiddleware);
+// Toutes les routes ici sont protégées par authMiddleware et adminMiddleware
+router.use(authMiddleware, adminMiddleware);
 
 // Route de test
 router.get('/test', (req, res) => {
     res.json({ message: 'Admin routes working' });
 });
 
-// Obtenir tous les utilisateurs
+// Récupérer tous les utilisateurs
 router.get('/users', async (req, res) => {
     try {
-        const users = await User.find()
-            .select('-password')
-            .sort({ createdAt: -1 });
-
+        const users = await User.find().select('-password');
         res.json({ users });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -39,31 +36,15 @@ router.delete('/users/:userId', async (req, res) => {
     }
 });
 
-// Obtenir toutes les montres
+// Récupérer toutes les montres
 router.get('/watches', async (req, res) => {
     try {
-        if (req.user.role !== 'admin') {
-            return res.status(403).json({ message: 'Accès non autorisé' });
-        }
-
         const watches = await Watch.find()
-            .populate({
-                path: 'owner',
-                select: 'username'
-            })
-            .populate({
-                path: 'marque',
-                model: 'Brand',
-                select: 'name'
-            })
-            .sort({ createdAt: -1 });
-
-        console.log('Watches après populate:', watches);
-
+            .populate('owner', 'username')
+            .populate('marque', 'name');
         res.json({ watches });
     } catch (error) {
-        console.error('Error fetching watches:', error);
-        res.status(500).json({ message: 'Erreur serveur' });
+        res.status(500).json({ message: error.message });
     }
 });
 
@@ -95,6 +76,16 @@ router.patch('/users/:userId/role', async (req, res) => {
         ).select('-password');
         
         res.json({ user });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Gestion des marques
+router.get('/brands', async (req, res) => {
+    try {
+        const brands = await Brand.find();
+        res.json({ brands });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

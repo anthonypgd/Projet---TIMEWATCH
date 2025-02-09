@@ -41,7 +41,8 @@ router.post('/watch', authMiddleware, async (req, res) => {
 router.get('/watch/:watch_id', authMiddleware, async (req, res) => {
     try {
         const watch = await Watch.findById(req.params.watch_id)
-            .populate('owner', 'username');
+            .populate('owner', 'username')
+            .populate('marque', 'name');
         
         if (!watch) {
             return res.status(404).json({ error: 'Montre introuvable' });
